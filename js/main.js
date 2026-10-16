@@ -1,16 +1,19 @@
 "use strict";
+
 (() => {
-  const video = document.getElementById("sceneVideo"),
-    still = document.getElementById("sceneStill"),
-    cinema = document.getElementById("home");
-  const prev = document.getElementById("prevScene"),
-    next = document.getElementById("nextScene"),
-    count = document.getElementById("sceneCount"),
-    small = document.getElementById("sceneSmall"),
-    title = document.getElementById("heroTitle"),
-    desc = document.getElementById("heroDesc"),
-    message = document.getElementById("loadMessage");
+  const video = document.getElementById("sceneVideo");
+  const still = document.getElementById("sceneStill");
+
+  const prev = document.getElementById("prevScene");
+  const next = document.getElementById("nextScene");
+  const count = document.getElementById("sceneCount");
+  const small = document.getElementById("sceneSmall");
+  const title = document.getElementById("heroTitle");
+  const desc = document.getElementById("heroDesc");
+  const message = document.getElementById("loadMessage");
+
   const root = "assets/";
+
   const stages = [
     {
       small: "THE FIRST LOOK",
@@ -31,229 +34,267 @@
         "The happiest beginnings deserve a memorable arrival. Your special day, styled with love.",
     },
   ];
+
   const clips = {
     forward: ["video/forward-1.mp4", "video/forward-2.mp4"],
     reverse: ["video/reverse-1.mp4", "video/reverse-2.mp4"],
   };
-  let active = 0,
-    busy = false,
-    gestureAt = 0,
-    runId = 0;
+
+  let active = 0;
+  let busy = false;
+  let runId = 0;
+
   const dots = [...document.querySelectorAll(".dot")];
+
   function setUI() {
     count.textContent = `0${active + 1} / 03`;
     small.textContent = stages[active].small;
     title.innerHTML = stages[active].heading;
     desc.textContent = stages[active].description;
+
     still.src = `${root}images/still-${active + 1}.jpg`;
+
     prev.disabled = busy || active === 0;
     next.disabled = busy || active === 2;
-    dots.forEach((d, i) => {
-      d.classList.toggle("is-active", i === active);
-      d.disabled = busy;
-      d.setAttribute("aria-current", String(i === active));
+
+    dots.forEach((dot, index) => {
+      const selected = index === active;
+
+      dot.classList.toggle("is-active", selected);
+      dot.disabled = busy;
+
+      if (selected) {
+        dot.setAttribute("aria-current", "step");
+      } else {
+        dot.removeAttribute("aria-current");
+      }
     });
   }
+
   function showStill() {
     video.classList.remove("visible");
     still.style.visibility = "visible";
   }
+
   function releaseVideo() {
     video.pause();
     video.removeAttribute("src");
     video.load();
   }
+
+  function waitForEvent(element, successEvent, timeout = 15000) {
+    return new Promise((resolve, reject) => {
+      let timer;
+
+      function cleanup() {
+        clearTimeout(timer);
+        element.removeEventListener(successEvent, onSuccess);
+        element.removeEventListener("error", onError);
+      }
+
+      function onSuccess() {
+        cleanup();
+        resolve();
+      }
+
+      function onError() {
+        cleanup();
+        reject(new Error("Video loading or playback failed."));
+      }
+
+      element.addEventListener(successEvent, onSuccess, {
+        once: true,
+      });
+
+      element.addEventListener("error", onError, {
+        once: true,
+      });
+
+      timer = setTimeout(() => {
+        cleanup();
+        reject(new Error("Video operation timed out."));
+      }, timeout);
+    });
+  }
+
   async function goto(destination) {
-    if (busy || destination < 0 || destination > 2 || destination === active)
+    if (busy || destination < 0 || destination > 2 || destination === active) {
       return;
-    const direction = destination > active ? 1 : -1,
-      clipIndex = direction === 1 ? active : active - 1;
+    }
+
+    // Move one scene at a time.
+    if (Math.abs(destination - active) !== 1) return;
+
+    const direction = destination > active ? 1 : -1;
+
+    const clipIndex = direction === 1 ? active : active - 1;
+
+    const file = clips[direction === 1 ? "forward" : "reverse"][clipIndex];
+
     busy = true;
     setUI();
+
     const id = ++runId;
+
     message.textContent = "Preparing cinematic transition…";
+
     showStill();
-    const file = clips[direction === 1 ? "forward" : "reverse"][clipIndex];
+
     try {
       video.pause();
-      video.src = root + file;
-      video.currentTime = 0;
       video.muted = true;
       video.playsInline = true;
+      video.loop = false;
+      video.preload = "auto";
+
+      video.src = root + file;
       video.load();
-      await new Promise((resolve, reject) => {
-        if (video.readyState >= 2) return resolve();
-        const timer = setTimeout(() => {
-          cleanup();
-          reject(new Error("Video loading timed out."));
-        }, 15000);
-        function cleanup() {
-          clearTimeout(timer);
-          video.removeEventListener("loadeddata", ok);
-          video.removeEventListener("error", bad);
-        }
-        function ok() {
-          cleanup();
-          resolve();
-        }
-        function bad() {
-          cleanup();
-          reject(new Error("Video failed to load."));
-        }
-        video.addEventListener("loadeddata", ok);
-        video.addEventListener("error", bad);
-      });
+
+      if (video.readyState < 2) {
+        await waitForEvent(video, "loadeddata", 15000);
+      }
+
       if (id !== runId) return;
+
+      // Register the ended listener BEFORE playing,
+      // so we never miss a quick ended event.
+      const ended = waitForEvent(video, "ended", 30000);
+
       await video.play();
+
       video.classList.add("visible");
+      still.style.visibility = "hidden";
+
       message.textContent = "";
-      await new Promise((resolve, reject) => {
-        let timer = setTimeout(() => {
-          clear();
-          reject(new Error("Playback took too long."));
-        }, 25000);
-        function clear() {
-          clearTimeout(timer);
-          video.removeEventListener("ended", ended);
-          video.removeEventListener("error", bad);
-        }
-        function ended() {
-          clear();
-          resolve();
-        }
-        function bad() {
-          clear();
-          reject(new Error("Playback interrupted."));
-        }
-        video.addEventListener("ended", ended);
-        video.addEventListener("error", bad);
-      });
+
+      await ended;
+
       if (id !== runId) return;
-      active += direction;
+
+      active = destination;
+
+      // Allow the final still image to load before switching.
+      const finalStill = new Image();
+      finalStill.src = `${root}images/still-${active + 1}.jpg`;
+
+      try {
+        await finalStill.decode();
+      } catch (_) {
+        // Continue even if decoding is unsupported.
+      }
+
       setUI();
       showStill();
       releaseVideo();
+
       busy = false;
       setUI();
-    } catch (e) {
-      console.warn(e);
-      message.textContent =
-        "Video playback unavailable. Tap Next / Back to try again.";
+    } catch (error) {
+      console.warn("Cinematic transition error:", error);
+
+      message.textContent = "Video playback unavailable. Please try again.";
+
       showStill();
       releaseVideo();
+
       busy = false;
       setUI();
     }
   }
-  function changeBy(dir) {
-    goto(active + dir);
+
+  function changeBy(direction) {
+    goto(active + direction);
   }
+
+  // NEXT and BACK buttons only.
   prev.addEventListener("click", () => changeBy(-1));
   next.addEventListener("click", () => changeBy(1));
-  dots.forEach((d, i) =>
-    d.addEventListener("click", () => {
-      if (Math.abs(i - active) === 1) goto(i);
-    }),
-  );
-  function heroVisible() {
-    const r = cinema.getBoundingClientRect();
-    return r.top < innerHeight * 0.45 && r.bottom > innerHeight * 0.55;
-  }
-  window.addEventListener(
-    "wheel",
-    (e) => {
-      if (!heroVisible() || Math.abs(e.deltaY) < 7) return;
-      const dir = e.deltaY > 0 ? 1 : -1;
-      if (busy) {
-        e.preventDefault();
-        return;
+
+  // Scene indicators.
+  dots.forEach((dot, index) => {
+    dot.addEventListener("click", () => {
+      if (!busy && Math.abs(index - active) === 1) {
+        goto(index);
       }
-      if ((dir === 1 && active < 2) || (dir === -1 && active > 0)) {
-        e.preventDefault();
-        const now = performance.now();
-        if (now - gestureAt > 520) {
-          gestureAt = now;
-          changeBy(dir);
+    });
+  });
+
+  /*
+   * SCROLL-CONTROLLED SCENE NAVIGATION REMOVED
+   *
+   * No wheel interception.
+   * No touch swipe interception.
+   * No scroll lock.
+   *
+   * Website scrolling is now completely normal.
+   */
+
+  // Mobile navigation.
+  const menu = document.getElementById("menuToggle");
+  const mobile = document.getElementById("mobileNav");
+
+  if (menu && mobile) {
+    menu.addEventListener("click", () => {
+      const opened = mobile.classList.toggle("open");
+
+      menu.setAttribute("aria-expanded", String(opened));
+    });
+
+    mobile.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        mobile.classList.remove("open");
+        menu.setAttribute("aria-expanded", "false");
+      });
+    });
+  }
+
+  // Footer year.
+  const year = document.getElementById("year");
+
+  if (year) {
+    year.textContent = new Date().getFullYear();
+  }
+
+  // GSAP falling flower petals.
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+
+  if (!reducedMotion) {
+    const holder = document.getElementById("petals");
+
+    if (holder) {
+      for (let i = 0; i < 17; i++) {
+        const petal = document.createElement("i");
+        petal.className = "petal";
+
+        holder.appendChild(petal);
+
+        petal.style.left = `${Math.random() * 100}%`;
+        petal.style.top = `${-Math.random() * 140}%`;
+        petal.style.pointerEvents = "none";
+
+        const delay = -Math.random() * 16;
+        const speed = 11 + Math.random() * 12;
+
+        if (window.gsap) {
+          gsap.to(petal, {
+            y: window.innerHeight + 200,
+            x: (Math.random() - 0.5) * 180,
+            rotation: 340 + Math.random() * 420,
+            duration: speed,
+            repeat: -1,
+            ease: "none",
+            delay,
+          });
+        } else {
+          petal.style.opacity = ".18";
         }
       }
-    },
-    { passive: false },
-  );
-  let touchStart = null;
-  cinema.addEventListener(
-    "touchstart",
-    (e) => {
-      touchStart = e.touches[0]?.clientY ?? null;
-    },
-    { passive: true },
-  );
-  cinema.addEventListener(
-    "touchend",
-    (e) => {
-      if (touchStart === null) return;
-      const dist = touchStart - (e.changedTouches[0]?.clientY ?? touchStart);
-      touchStart = null;
-      if (Math.abs(dist) > 55 && !busy) {
-        if (dist > 0 && active < 2) changeBy(1);
-        else if (dist < 0 && active > 0) changeBy(-1);
-      }
-    },
-    { passive: true },
-  );
-  window.addEventListener("keydown", (e) => {
-    if (
-      !heroVisible() ||
-      ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName)
-    )
-      return;
-    if (e.key === "ArrowRight") {
-      e.preventDefault();
-      changeBy(1);
-    } else if (e.key === "ArrowLeft") {
-      e.preventDefault();
-      changeBy(-1);
-    }
-  });
-  const menu = document.getElementById("menuToggle"),
-    mobile = document.getElementById("mobileNav");
-  menu.addEventListener("click", () => {
-    const opened = mobile.classList.toggle("open");
-    menu.setAttribute("aria-expanded", String(opened));
-  });
-  mobile.querySelectorAll("a").forEach((a) =>
-    a.addEventListener("click", () => {
-      mobile.classList.remove("open");
-      menu.setAttribute("aria-expanded", "false");
-    }),
-  );
-  document.getElementById("year").textContent = new Date().getFullYear();
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!reduced) {
-    const holder = document.getElementById("petals");
-    for (let i = 0; i < 17; i++) {
-      const el = document.createElement("i");
-      el.className = "petal";
-      holder.appendChild(el);
-      const x = Math.random() * 100,
-        y = -Math.random() * 140;
-      el.style.left = x + "%";
-      el.style.top = y + "%";
-      const delay = -Math.random() * 16,
-        speed = 11 + Math.random() * 12;
-      if (window.gsap) {
-        gsap.to(el, {
-          y: innerHeight + 200,
-          x: (Math.random() - 0.5) * 180,
-          rotation: 340 + Math.random() * 420,
-          duration: speed,
-          repeat: -1,
-          ease: "none",
-          delay,
-        });
-      } else {
-        el.style.opacity = ".18";
-      }
     }
   }
+
+  // Initialize first scene.
   setUI();
+  showStill();
 })();
