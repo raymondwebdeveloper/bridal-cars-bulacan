@@ -1,6 +1,10 @@
 "use strict";
 
 (() => {
+  // ==========================================
+  // CINEMATIC HERO
+  // ==========================================
+
   const video = document.getElementById("sceneVideo");
   const still = document.getElementById("sceneStill");
 
@@ -42,7 +46,6 @@
 
   let active = 0;
   let busy = false;
-  let runId = 0;
 
   const dots = [...document.querySelectorAll(".dot")];
 
@@ -61,6 +64,7 @@
       const selected = index === active;
 
       dot.classList.toggle("is-active", selected);
+
       dot.disabled = busy;
 
       if (selected) {
@@ -99,16 +103,12 @@
 
       function onError() {
         cleanup();
-        reject(new Error("Video loading or playback failed."));
+        reject(new Error("Video operation failed."));
       }
 
-      element.addEventListener(successEvent, onSuccess, {
-        once: true,
-      });
+      element.addEventListener(successEvent, onSuccess, { once: true });
 
-      element.addEventListener("error", onError, {
-        once: true,
-      });
+      element.addEventListener("error", onError, { once: true });
 
       timer = setTimeout(() => {
         cleanup();
@@ -122,8 +122,9 @@
       return;
     }
 
-    // Move one scene at a time.
-    if (Math.abs(destination - active) !== 1) return;
+    if (Math.abs(destination - active) !== 1) {
+      return;
+    }
 
     const direction = destination > active ? 1 : -1;
 
@@ -133,8 +134,6 @@
 
     busy = true;
     setUI();
-
-    const id = ++runId;
 
     message.textContent = "Preparing cinematic transition…";
 
@@ -154,33 +153,27 @@
         await waitForEvent(video, "loadeddata", 15000);
       }
 
-      if (id !== runId) return;
-
-      // Register the ended listener BEFORE playing,
-      // so we never miss a quick ended event.
-      const ended = waitForEvent(video, "ended", 30000);
-
       await video.play();
 
       video.classList.add("visible");
       still.style.visibility = "hidden";
-
       message.textContent = "";
 
-      await ended;
-
-      if (id !== runId) return;
+      // Wait until transition finishes.
+      if (!video.ended) {
+        await waitForEvent(video, "ended", 30000);
+      }
 
       active = destination;
 
-      // Allow the final still image to load before switching.
       const finalStill = new Image();
+
       finalStill.src = `${root}images/still-${active + 1}.jpg`;
 
       try {
         await finalStill.decode();
       } catch (_) {
-        // Continue even if decoding is unsupported.
+        // Use the still even if decode fails.
       }
 
       setUI();
@@ -206,11 +199,18 @@
     goto(active + direction);
   }
 
-  // NEXT and BACK buttons only.
-  prev.addEventListener("click", () => changeBy(-1));
-  next.addEventListener("click", () => changeBy(1));
+  // ==========================================
+  // NEXT / BACK BUTTONS
+  // ==========================================
 
-  // Scene indicators.
+  prev.addEventListener("click", () => {
+    changeBy(-1);
+  });
+
+  next.addEventListener("click", () => {
+    changeBy(1);
+  });
+
   dots.forEach((dot, index) => {
     dot.addEventListener("click", () => {
       if (!busy && Math.abs(index - active) === 1) {
@@ -219,18 +219,16 @@
     });
   });
 
-  /*
-   * SCROLL-CONTROLLED SCENE NAVIGATION REMOVED
-   *
-   * No wheel interception.
-   * No touch swipe interception.
-   * No scroll lock.
-   *
-   * Website scrolling is now completely normal.
-   */
+  // No wheel interception.
+  // No swipe interception.
+  // Normal page scrolling.
 
-  // Mobile navigation.
+  // ==========================================
+  // MOBILE NAVIGATION
+  // ==========================================
+
   const menu = document.getElementById("menuToggle");
+
   const mobile = document.getElementById("mobileNav");
 
   if (menu && mobile) {
@@ -243,58 +241,230 @@
     mobile.querySelectorAll("a").forEach((link) => {
       link.addEventListener("click", () => {
         mobile.classList.remove("open");
+
         menu.setAttribute("aria-expanded", "false");
       });
     });
   }
 
-  // Footer year.
+  // ==========================================
+  // FOOTER YEAR
+  // ==========================================
+
   const year = document.getElementById("year");
 
   if (year) {
     year.textContent = new Date().getFullYear();
   }
 
-  // GSAP falling flower petals.
+  // ==========================================
+  // REUSABLE CONTINUOUS GSAP PETALS
+  // ==========================================
+
   const reducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)",
   ).matches;
 
-  if (!reducedMotion) {
-    const holder = document.getElementById("petals");
+  function createFallingPetals({
+    containerId,
+    sectionId,
+    desktopCount = 20,
+    mobileCount = 10,
+    minSize = 14,
+    maxSize = 32,
+    minDuration = 12,
+    maxDuration = 22,
+    colors = ["#FFFFFF"],
+    maxOpacity = 0.75,
+    wind = 140,
+  }) {
+    const container = document.getElementById(containerId);
 
-    if (holder) {
-      for (let i = 0; i < 17; i++) {
-        const petal = document.createElement("i");
-        petal.className = "petal";
+    const section = document.getElementById(sectionId);
 
-        holder.appendChild(petal);
+    if (!container || !section || !window.gsap || reducedMotion) {
+      return;
+    }
 
-        petal.style.left = `${Math.random() * 100}%`;
-        petal.style.top = `${-Math.random() * 140}%`;
-        petal.style.pointerEvents = "none";
+    const isMobile = window.innerWidth < 768;
 
-        const delay = -Math.random() * 16;
-        const speed = 11 + Math.random() * 12;
+    const petalCount = isMobile ? mobileCount : desktopCount;
 
-        if (window.gsap) {
-          gsap.to(petal, {
-            y: window.innerHeight + 200,
-            x: (Math.random() - 0.5) * 180,
-            rotation: 340 + Math.random() * 420,
-            duration: speed,
-            repeat: -1,
-            ease: "none",
-            delay,
+    const timelines = [];
+
+    const random = (min, max) => gsap.utils.random(min, max);
+
+    const getHeight = () =>
+      container.clientHeight || section.offsetHeight || window.innerHeight;
+
+    for (let i = 0; i < petalCount; i++) {
+      const petal = document.createElement("i");
+
+      petal.className = "petal";
+
+      container.appendChild(petal);
+
+      const size = random(minSize, maxSize);
+
+      const color = colors[Math.floor(Math.random() * colors.length)];
+
+      const duration = random(minDuration, maxDuration);
+
+      const peakOpacity = random(maxOpacity * 0.65, maxOpacity);
+
+      // Initial petal appearance.
+      gsap.set(petal, {
+        position: "absolute",
+        top: 0,
+        left: `${random(0, 100)}%`,
+        width: size,
+        height: size * 0.7,
+        background: color,
+        opacity: 0,
+        pointerEvents: "none",
+        transformOrigin: "center center",
+      });
+
+      // One repeating timeline per petal.
+      // No new timelines created per cycle.
+      const timeline = gsap.timeline({
+        repeat: -1,
+        repeatRefresh: true,
+        paused: true,
+      });
+
+      // Continuous downward movement.
+      timeline.fromTo(
+        petal,
+        {
+          x: 0,
+          y: -size - 50,
+          rotation: () => random(-90, 90),
+        },
+        {
+          x: () => random(-wind, wind),
+          y: () => getHeight() + size + 60,
+          rotation: () => random(300, 720),
+          duration,
+          ease: "none",
+          immediateRender: false,
+        },
+        0,
+      );
+
+      // Smooth fade in.
+      timeline.fromTo(
+        petal,
+        {
+          opacity: 0,
+        },
+        {
+          opacity: peakOpacity,
+          duration: Math.min(2.5, duration * 0.22),
+          ease: "sine.out",
+          immediateRender: false,
+        },
+        0,
+      );
+
+      // Smooth fade out near bottom.
+      timeline.to(
+        petal,
+        {
+          opacity: 0,
+          duration: Math.min(3.5, duration * 0.3),
+          ease: "sine.inOut",
+        },
+        duration - Math.min(3.5, duration * 0.3),
+      );
+
+      // Distribute petals along the path,
+      // avoiding a synchronized start.
+      timeline.progress(Math.random());
+      timelines.push(timeline);
+    }
+
+    // ========================================
+    // PAUSE WHEN SECTION IS NOT VISIBLE
+    // ========================================
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          const visible = entries[0].isIntersecting;
+
+          timelines.forEach((timeline) => {
+            if (visible) {
+              timeline.play();
+            } else {
+              timeline.pause();
+            }
           });
-        } else {
-          petal.style.opacity = ".18";
-        }
-      }
+        },
+        {
+          threshold: 0.01,
+        },
+      );
+
+      observer.observe(section);
+    } else {
+      // Fallback for older browsers.
+      timelines.forEach((timeline) => {
+        timeline.play();
+      });
     }
   }
 
-  // Initialize first scene.
+  // ==========================================
+  // HERO — PINK FALLING PETALS
+  // ==========================================
+
+  createFallingPetals({
+    containerId: "petals",
+    sectionId: "home",
+
+    desktopCount: 24,
+    mobileCount: 12,
+
+    minSize: 18,
+    maxSize: 38,
+
+    minDuration: 10,
+    maxDuration: 19,
+
+    colors: ["#F8B6C5", "#F5A2B8", "#FFE0E6", "#EAB0C2"],
+
+    maxOpacity: 0.7,
+    wind: 180,
+  });
+
+  // ==========================================
+  // CTA — WHITE / IVORY FALLING PETALS
+  // ==========================================
+
+  createFallingPetals({
+    containerId: "ctaPetals",
+    sectionId: "contact",
+
+    desktopCount: 14,
+    mobileCount: 7,
+
+    minSize: 14,
+    maxSize: 28,
+
+    minDuration: 13,
+    maxDuration: 23,
+
+    colors: ["#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFF8F2", "#FFE8ED"],
+
+    maxOpacity: 0.85,
+    wind: 100,
+  });
+
+  // ==========================================
+  // INITIALIZE HERO
+  // ==========================================
+
   setUI();
   showStill();
 })();

@@ -454,6 +454,37 @@ footer {
   font-size: 12px;
   color: #8a716a;
 }
+
+/* CTA — White falling petals */
+.contact-section {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+#ctaPetals {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.contact-content {
+  position: relative;
+  z-index: 2;
+}
+
+#ctaPetals .petal {
+  position: absolute;
+  display: block;
+  border-radius: 70% 10% 70% 10%;
+  transform-origin: center;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow: 0 1px 4px rgba(255, 255, 255, 0.15);
+}
+
 @media (max-width: 950px) {
   .desktop-nav,
   .nav-book {
