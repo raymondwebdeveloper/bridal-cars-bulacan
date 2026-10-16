@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#fff8f3" />
+    <title>Bridal Cars Bulacan | Arrive Beautifully</title>
+    <meta
+      name="description"
+      content="Elegant bridal car rental in Bulacan. White MG ZS Alpha, romantic floral styling, and a beautiful wedding experience."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+    ></script>
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="js/main.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header" id="header">
+      <a href="#home" class="brand" aria-label="Bridal Cars Bulacan home"
+        ><span class="brand-flower">❀</span
+        ><span
+          ><strong>Bridal Cars</strong><small>B U L A C A N</small></span
+        ></a
+      >
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a class="active" href="#home">Home</a><a href="#about">About</a
+        ><a href="#packages">Packages</a><a href="#gallery">Gallery</a
+        ><a href="#contact">Contact</a>
+      </nav>
+      <a class="nav-book" href="#contact">Book Now <span>→</span></a>
+      <button
+        id="menuToggle"
+        class="menu-toggle"
+        aria-expanded="false"
+        aria-label="Open menu"
+      >
+        ☰
+      </button>
+    </header>
+    <nav id="mobileNav" class="mobile-nav" aria-label="Mobile navigation">
+      <a href="#home">Home</a><a href="#about">About</a
+      ><a href="#packages">Packages</a><a href="#gallery">Gallery</a
+      ><a href="#contact">Contact</a>
+    </nav>
+    <main>
+      <section id="home" class="cinema" aria-label="Wedding cinematic story">
+        <div class="cinema-media" aria-hidden="true">
+          <img id="sceneStill" src="assets/images/still-1.jpg" alt="" /><video
+            id="sceneVideo"
+            playsinline
+            muted
+            preload="auto"
+            disablepictureinpicture
+          ></video>
+          <div class="cinema-shade"></div>
+          <div id="petals" class="petals"></div>
+        </div>
+        <div class="cinema-content">
+          <div class="eyebrow">
+            <span class="eyebrow-line"></span
+            ><span id="sceneCount">01 / 03</span
+            ><span id="sceneSmall">THE FIRST LOOK</span>
+          </div>
+          <h1 id="heroTitle">
+            Arrive Beautifully<br />on Your <em>Special Day</em>
+          </h1>
+          <p id="heroDesc">
+            Make your wedding day unforgettable with our elegant White MG ZS
+            Alpha bridal car — a beautiful beginning to your forever.
+          </p>
+          <div class="hero-cta">
+            <a href="#contact" class="primary-cta"
+              >Book Your Bridal Car <span>→</span></a
+            ><a class="secondary-cta" href="#packages"
+              >View Packages <span>→</span></a
+            >
+          </div>
+        </div>
+        <div class="cinema-footer">
+          <div class="scroll-hint">
+            <span class="scroll-icon">↓</span><span>Scroll to discover</span>
+          </div>
+          <div class="scene-control">
+            <button
+              id="prevScene"
+              aria-label="Previous scene"
+              class="circle-btn"
+              disabled
+            >
+              ‹
+            </button>
+            <div class="scene-dots" aria-label="Scene progress">
+              <button
+                class="dot is-active"
+                data-scene="0"
+                aria-label="Scene 1"
+              ></button
+              ><button class="dot" data-scene="1" aria-label="Scene 2"></button
+              ><button class="dot" data-scene="2" aria-label="Scene 3"></button>
+            </div>
+            <button id="nextScene" aria-label="Next scene" class="circle-btn">
+              ›
+            </button>
+          </div>
+        </div>
+        <div
+          id="loadMessage"
+          class="load-message"
+          role="status"
+          aria-live="polite"
+        ></div>
+      </section>
+      <div class="benefits">
+        <div>✧ <span>Elegant White MG ZS Alpha</span></div>
+        <div>♡ <span>Wedding-Ready Floral Styling</span></div>
+        <div>◈ <span>Serving Bulacan</span></div>
+        <div>◷ <span>Reliable & On-Time</span></div>
+      </div>
+      <section id="about" class="content-section about-section">
+        <div>
+          <p class="section-kicker">OUR BRIDAL CAR</p>
+          <h2>White MG ZS Alpha</h2>
+          <p>
+            Make a beautiful entrance on your special day. Our elegant white
+            bridal car combines comfort, sophistication and romantic floral
+            styling for memorable wedding moments.
+          </p>
+          <a class="inline-link" href="#contact">Plan your bridal ride →</a>
+        </div>
+        <img
+          src="assets/images/scene-1.jpg"
+          alt="White MG ZS Alpha wedding car with bride and groom"
+          loading="lazy"
+        />
+      </section>
+      <section id="packages" class="content-section package-section">
+        <p class="section-kicker">BRIDAL PACKAGE</p>
+        <h2>A beautiful beginning</h2>
+        <div class="package-card">
+          <div>
+            <span>WHITE MG ZS ALPHA</span
+            ><strong>₱3,500 <small>/ 4 hours</small></strong>
+            <p>
+              With elegant front floral arrangement. Service coverage and other
+              inclusions are subject to booking confirmation.
+            </p>
+          </div>
+          <a class="primary-cta" href="#contact">Inquire & Book →</a>
+        </div>
+      </section>
+      <section id="gallery" class="content-section gallery-section">
+        <p class="section-kicker">GALLERY</p>
+        <h2>Moments worth remembering</h2>
+        <div class="gallery-grid">
+          <img
+            src="assets/images/scene-1.jpg"
+            alt="Wedding photoshoot beside bridal car"
+            loading="lazy"
+          /><img
+            src="assets/images/scene-2.jpg"
+            alt="Romantic car interior and sunroof"
+            loading="lazy"
+          /><img
+            src="assets/images/scene-3.jpg"
+            alt="Happy newlyweds waving through sunroof"
+            loading="lazy"
+          />
+        </div>
+      </section>
+      <section id="contact" class="contact-section">
+        <p class="section-kicker">LET'S MAKE IT MEMORABLE</p>
+        <h2>Ready for your special day?</h2>
+        <p>
+          Tell us your wedding date, pickup location, venue and preferred time.
+        </p>
+        <a
+          class="primary-cta"
+          href="https://www.facebook.com/"
+          target="_blank"
+          rel="noopener"
+          >Message for Booking →</a
+        >
+        <p class="contact-note">
+          Replace the Facebook link with your official Bridal Cars Bulacan page
+          before publishing.
+        </p>
+      </section>
+    </main>
+    <footer>
+      © <span id="year"></span> Bridal Cars Bulacan · Elegant rides for life's
+      beautiful moments.
+    </footer>
+  </body>
+</html>
