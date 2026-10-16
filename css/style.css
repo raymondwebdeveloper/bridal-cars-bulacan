@@ -674,3 +674,45 @@ html {
     scroll-padding-top: 80px;
   }
 }
+
+/* Minimal Footer */
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 25px 6%;
+  background: #fff8f3;
+  text-align: left;
+}
+
+.footer-copyright {
+  margin: 0;
+  font-size: 12px;
+  color: #956f70;
+  line-height: 1.6;
+}
+
+.footer-developer {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: #9a5964;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-developer:hover {
+  color: #c47e8d;
+  text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .site-footer {
+    flex-direction: column;
+    gap: 8px;
+    padding: 22px 15px;
+    text-align: center;
+  }
+}
