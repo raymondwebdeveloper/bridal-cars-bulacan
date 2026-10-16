@@ -637,3 +637,40 @@ footer {
     height: 220px;
   }
 }
+
+/* FIXED TOP NAVIGATION */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 9999;
+
+  background: rgba(255, 248, 243, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+}
+
+/* Prevent content from hiding behind header */
+body {
+  padding-top: 80px;
+}
+
+/* Smooth navigation to sections */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+
+/* Mobile navigation */
+@media (max-width: 768px) {
+  body {
+    padding-top: 70px;
+  }
+
+  html {
+    scroll-padding-top: 80px;
+  }
+}

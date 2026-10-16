@@ -468,3 +468,73 @@
   setUI();
   showStill();
 })();
+
+// ==========================================
+// ACTIVE NAVIGATION ON SCROLL
+// ==========================================
+
+const navSections = ["home", "about", "packages", "gallery", "contact"];
+
+const navLinks = document.querySelectorAll(
+  '.desktop-nav a[href^="#"], .mobile-nav a[href^="#"]',
+);
+
+function updateActiveNav() {
+  const scrollPosition = window.scrollY;
+  const headerHeight =
+    document.querySelector(".site-header")?.offsetHeight || 80;
+
+  const marker = scrollPosition + headerHeight + 100;
+
+  let currentSection = "home";
+
+  navSections.forEach((id) => {
+    const section = document.getElementById(id);
+
+    if (section && section.offsetTop <= marker) {
+      currentSection = id;
+    }
+  });
+
+  // Ensure Contact becomes active at page bottom.
+  if (
+    window.innerHeight + window.scrollY >=
+    document.documentElement.scrollHeight - 5
+  ) {
+    currentSection = "contact";
+  }
+
+  navLinks.forEach((link) => {
+    const isActive = link.getAttribute("href") === `#${currentSection}`;
+
+    link.classList.toggle("active", isActive);
+
+    if (isActive) {
+      link.setAttribute("aria-current", "location");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+let navTicking = false;
+
+window.addEventListener(
+  "scroll",
+  () => {
+    if (!navTicking) {
+      window.requestAnimationFrame(() => {
+        updateActiveNav();
+        navTicking = false;
+      });
+
+      navTicking = true;
+    }
+  },
+  { passive: true },
+);
+
+window.addEventListener("resize", updateActiveNav);
+window.addEventListener("load", updateActiveNav);
+
+updateActiveNav();
