@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://raymondwebdeveloper.github.io/bridal-cars-bulacan/sitemap.xml
