@@ -1124,3 +1124,596 @@ h1 em {
 .footer-developer svg {
   flex-shrink: 0;
 }
+.wedding-gallery-section {
+  position: relative;
+  padding: 100px 20px 80px;
+  background: linear-gradient(180deg, #fffaf8 0%, #fffdfc 100%);
+  overflow: hidden;
+}
+
+.wedding-gallery-section .container {
+  max-width: 1280px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.gallery-header {
+  text-align: center;
+  max-width: 850px;
+  margin: 0 auto 40px;
+}
+
+.gallery-eyebrow {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #b67d7d;
+  margin-bottom: 14px;
+}
+
+.gallery-header h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(42px, 6vw, 86px);
+  line-height: 0.95;
+  color: #7f4b4b;
+  margin: 0 0 15px;
+  font-weight: 600;
+}
+
+.gallery-header p {
+  font-size: 18px;
+  line-height: 1.7;
+  color: #7d6a6a;
+  margin: 0 auto;
+}
+
+.gallery-top-badge {
+  position: absolute;
+  left: 10px;
+  top: 110px;
+  z-index: 3;
+}
+
+.badge-circle {
+  width: 180px;
+  height: 180px;
+  border: 1px solid rgba(192, 136, 136, 0.35);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #9b6666;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(165, 125, 125, 0.1);
+}
+
+.badge-circle strong {
+  font-size: 42px;
+  line-height: 1;
+  font-family: "Cormorant Garamond", serif;
+  color: #9f6060;
+}
+
+.badge-circle span {
+  font-size: 24px;
+  line-height: 1.1;
+  margin-top: 6px;
+  font-family: "Cormorant Garamond", serif;
+}
+
+.badge-circle small {
+  margin-top: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.bridal-gallery-slider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 25px;
+}
+
+.gallery-main-view {
+  position: relative;
+  flex: 1;
+  min-height: 580px;
+}
+
+.gallery-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(20px);
+  transition: all 0.45s ease;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 18px 60px rgba(97, 67, 67, 0.14);
+  background: #fff;
+}
+
+.gallery-slide.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  position: relative;
+}
+
+.gallery-slide img {
+  width: 100%;
+  height: 580px;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-slide::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.02) 0%,
+    rgba(0, 0, 0, 0.15) 60%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+  pointer-events: none;
+}
+
+.gallery-slide-content {
+  position: absolute;
+  left: 32px;
+  bottom: 28px;
+  z-index: 2;
+  color: #fff;
+  max-width: 420px;
+}
+
+.gallery-slide-content h3 {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 42px;
+  margin: 0 0 8px;
+  font-weight: 600;
+}
+
+.gallery-slide-content p {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.gallery-nav {
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #a96e6e;
+  font-size: 24px;
+  box-shadow: 0 10px 25px rgba(80, 50, 50, 0.12);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+}
+
+.gallery-nav:hover {
+  background: #e7a7a0;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.gallery-thumbnails {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.gallery-thumbnails .thumb {
+  border: 2px solid transparent;
+  padding: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(80, 50, 50, 0.07);
+  transition: all 0.25s ease;
+}
+
+.gallery-thumbnails .thumb img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-thumbnails .thumb.active {
+  border-color: #df9a94;
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(180, 115, 115, 0.18);
+}
+
+.gallery-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.gallery-dots .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #e6d2cf;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.gallery-dots .dot.active {
+  width: 28px;
+  background: #d98f88;
+}
+
+.gallery-actions {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.gallery-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 220px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.gallery-btn.primary {
+  background: linear-gradient(135deg, #e4a49d, #d88983);
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(216, 137, 131, 0.3);
+}
+
+.gallery-btn.primary:hover {
+  transform: translateY(-2px);
+}
+
+.gallery-btn.secondary {
+  border: 1px solid #dfb0ab;
+  color: #9a6666;
+  background: #fff;
+}
+
+.gallery-btn.secondary:hover {
+  background: #fff5f3;
+}
+
+.gallery-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 55px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(199, 155, 155, 0.2);
+}
+
+.feature-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.feature-item .icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.feature-item h4 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: #9a5f5f;
+}
+
+.feature-item p {
+  margin: 0;
+  color: #7a6969;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.gallery-bg-decor {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(241, 201, 197, 0.25) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  z-index: 0;
+}
+
+.decor-left {
+  left: -60px;
+  top: 180px;
+}
+
+.decor-right {
+  right: -60px;
+  top: 120px;
+}
+
+@media (max-width: 1200px) {
+  .gallery-top-badge {
+    position: static;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .gallery-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .gallery-main-view,
+  .gallery-slide img {
+    height: 460px;
+    min-height: unset;
+  }
+
+  .gallery-thumbnails {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .gallery-nav {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wedding-gallery-section {
+    padding: 80px 16px 60px;
+  }
+
+  .gallery-header h2 {
+    font-size: 52px;
+  }
+
+  .gallery-main-view,
+  .gallery-slide img {
+    height: 340px;
+  }
+
+  .gallery-slide-content {
+    left: 20px;
+    bottom: 20px;
+  }
+
+  .gallery-slide-content h3 {
+    font-size: 30px;
+  }
+
+  .gallery-thumbnails {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .gallery-thumbnails .thumb img {
+    height: 100px;
+  }
+
+  .gallery-features {
+    grid-template-columns: 1fr;
+  }
+
+  .gallery-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .gallery-btn {
+    width: 100%;
+    max-width: 340px;
+  }
+}
+
+/* =========================================
+   BRIDAL GALLERY — COMPACT IMAGE FIX
+   ========================================= */
+
+/* Reduce overall gallery width */
+.wedding-gallery-section .container {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Main gallery image container */
+.wedding-gallery-section .gallery-main-view {
+  height: 440px;
+  max-height: 440px;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+/* Keep each slide inside the container */
+.wedding-gallery-section .gallery-slide {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Prevent image cropping and stretching */
+.wedding-gallery-section .gallery-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Smaller gallery thumbnails */
+.wedding-gallery-section .gallery-thumbnails {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.wedding-gallery-section .thumb {
+  height: 95px;
+  overflow: hidden;
+  border-radius: 14px;
+}
+
+.wedding-gallery-section .thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ========================================
+   WEDDING MOMENTS - IMAGE BADGE
+   ======================================== */
+
+.wedding-gallery-section .gallery-top-badge {
+  position: absolute;
+  top: 105px;
+  left: 10px;
+  width: 165px;
+  height: auto;
+  z-index: 3;
+  margin: 0;
+}
+
+.wedding-gallery-section .wedding-moments-badge {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  border-radius: 50%;
+  box-shadow: none;
+}
+
+/* Tablet */
+@media (max-width: 1200px) {
+  .wedding-gallery-section .gallery-top-badge {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 145px;
+    margin: 0 auto 22px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .wedding-gallery-section .gallery-top-badge {
+    width: 120px;
+    margin-bottom: 18px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .wedding-gallery-section .gallery-main-view {
+    height: 360px;
+    max-height: 360px;
+  }
+
+  .wedding-gallery-section .thumb {
+    height: 75px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .wedding-gallery-section .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .wedding-gallery-section .gallery-main-view {
+    height: 260px;
+    max-height: 260px;
+    border-radius: 16px;
+  }
+
+  .wedding-gallery-section .thumb {
+    height: 60px;
+    border-radius: 8px;
+  }
+}
+
+/* ==========================================
+   COMPACT BRIDAL GALLERY — HEIGHT FIX
+   ========================================== */
+
+/* Desktop */
+.wedding-gallery-section .gallery-main-view {
+  height: 320px !important;
+  min-height: 0 !important;
+  max-height: 320px !important;
+}
+
+/* Ensure slides follow gallery height */
+.wedding-gallery-section .gallery-slide,
+.wedding-gallery-section .gallery-slide.active {
+  height: 100% !important;
+  min-height: 0 !important;
+}
+
+/* Keep the full image visible */
+.wedding-gallery-section .gallery-slide > img {
+  width: 100%;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center;
+}
+
+/* Keep caption inside the image frame */
+.wedding-gallery-section .gallery-slide-content {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  padding: 35px 24px 18px !important;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), transparent);
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .wedding-gallery-section .gallery-main-view {
+    height: 280px !important;
+    max-height: 280px !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .wedding-gallery-section .gallery-main-view {
+    height: 240px !important;
+    max-height: 240px !important;
+  }
+
+  .wedding-gallery-section .gallery-slide-content {
+    padding: 24px 14px 12px !important;
+  }
+}

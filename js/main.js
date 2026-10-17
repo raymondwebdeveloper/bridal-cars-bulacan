@@ -538,3 +538,97 @@ window.addEventListener("resize", updateActiveNav);
 window.addEventListener("load", updateActiveNav);
 
 updateActiveNav();
+
+const slides = document.querySelectorAll(".gallery-slide");
+const thumbs = document.querySelectorAll(".gallery-thumbnails .thumb");
+const dots = document.querySelectorAll(".gallery-dots .dot");
+const prevBtn = document.querySelector(".gallery-nav.prev");
+const nextBtn = document.querySelector(".gallery-nav.next");
+
+let currentSlide = 0;
+
+function showSlide(index) {
+  if (index < 0) index = slides.length - 1;
+  if (index >= slides.length) index = 0;
+
+  slides.forEach((slide, i) => {
+    slide.classList.toggle("active", i === index);
+  });
+
+  thumbs.forEach((thumb, i) => {
+    thumb.classList.toggle("active", i === index);
+  });
+
+  dots.forEach((dot, i) => {
+    dot.classList.toggle("active", i === index);
+  });
+
+  currentSlide = index;
+}
+
+prevBtn.addEventListener("click", () => {
+  showSlide(currentSlide - 1);
+});
+
+nextBtn.addEventListener("click", () => {
+  showSlide(currentSlide + 1);
+});
+
+thumbs.forEach((thumb) => {
+  thumb.addEventListener("click", () => {
+    showSlide(Number(thumb.dataset.index));
+  });
+});
+
+dots.forEach((dot) => {
+  dot.addEventListener("click", () => {
+    showSlide(Number(dot.dataset.index));
+  });
+});
+
+// Optional auto slide
+setInterval(() => {
+  showSlide(currentSlide + 1);
+}, 5000);
+
+showSlide(0);
+
+/* Same-image blurred gallery background */
+document
+  .querySelectorAll(".wedding-gallery-section .gallery-slide")
+  .forEach((slide) => {
+    const img = slide.querySelector("img");
+
+    if (!img) return;
+
+    const imageUrl = new URL(img.getAttribute("src"), document.baseURI).href;
+
+    slide.style.setProperty("--gallery-bg", `url("${imageUrl}")`);
+  });
+
+/* ==========================================
+   BRIDAL CARS BULACAN
+   BLURRED GALLERY BACKGROUND
+   ========================================== */
+
+function setupGalleryBackgrounds() {
+  const slides = document.querySelectorAll(
+    ".wedding-gallery-section .gallery-slide",
+  );
+
+  slides.forEach(function (slide) {
+    const img = slide.querySelector("img");
+
+    if (!img) return;
+
+    const imageUrl = img.src;
+
+    slide.style.setProperty("--gallery-bg", 'url("' + imageUrl + '")');
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", setupGalleryBackgrounds);
+} else {
+  setupGalleryBackgrounds();
+}
